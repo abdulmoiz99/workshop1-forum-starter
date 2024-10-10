@@ -12,12 +12,6 @@ const user = {
   uname: 'John',
 }
 
-// Nav Tab
-const tabs = [
-  { type: 'hot', text: 'Top' },
-  { type: 'newest', text: 'Newest' },
-]
-
 const App = () => {
   const [comments, setComments] = useState([
     {
@@ -58,10 +52,12 @@ const App = () => {
       like: 66,
     },
   ])
+  const [activeTab, setActiveTab] = useState("Top")
 
   const deleteComment = (commentId: Number) => {
     setComments(comment => comment.filter(c => c.rpid !== commentId));
   }
+
   return (
     <div className="app">
       <div className="reply-navigation">
@@ -71,8 +67,19 @@ const App = () => {
             <span className="total-reply">{comments.length}</span>
           </li>
           <li className="nav-sort">
-            <span className='nav-item'>Top</span>
-            <span className='nav-item'>Newest</span>
+            <span
+              className={`nav-item ${activeTab === 'Top' ? 'active' : ''}`}
+              onClick={() => setActiveTab("Top")}
+            >
+              Top
+            </span>
+            <span
+              className={`nav-item ${activeTab === 'Newest' ? 'active' : ''}`}
+              onClick={() => setActiveTab("Newest")}
+            >
+              Newest
+            </span>
+
           </li>
         </ul>
       </div>
