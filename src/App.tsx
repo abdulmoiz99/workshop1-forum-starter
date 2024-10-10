@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './App.scss'
 import avatar from './images/bozai.png';
 import _ from 'lodash';
+import { Comments } from './model/Comments';
 
 
 // current logged in user info
@@ -14,46 +15,10 @@ const user = {
   uname: 'John',
 }
 
+
 const App = () => {
-  const [comments, setComments] = useState([
-    {
-      // comment id
-      rpid: 3,
-      // user info
-      user: {
-        uid: '13258165',
-        avatar: '',
-        uname: 'Jay Zhou',
-      },
-      // comment content
-      content: 'Nice, well done',
-      // created datetime
-      ctime: '10-18 08:15',
-      like: 8,
-    },
-    {
-      rpid: 2,
-      user: {
-        uid: '36080105',
-        avatar: '',
-        uname: 'Song Xu',
-      },
-      content: 'I search for you thousands of times, from dawn till dusk.',
-      ctime: '11-13 11:29',
-      like: 88,
-    },
-    {
-      rpid: 1,
-      user: {
-        uid: '30009257',
-        avatar,
-        uname: 'John',
-      },
-      content: 'I told my computer I needed a break... now it will not stop sending me vacation ads.',
-      ctime: '10-19 09:00',
-      like: 66,
-    },
-  ])
+  let commentId = 1;
+  const [comments, setComments] = useState<Comments[]>([])
   const [activeTab, setActiveTab] = useState("Top")
 
   const deleteComment = (commentId: Number) => {
@@ -69,7 +34,15 @@ const App = () => {
       sortedComments = _.orderBy(comments, ['ctime'], ['asc']);
     }
     setComments(sortedComments)
+  }
 
+  const Post = (commentText: string) => {
+    const newComment = new Comments(
+      commentId++,
+      user,
+      commentText,
+    );
+    setComments([...comments, newComment])
   }
 
   return (
@@ -114,7 +87,7 @@ const App = () => {
               placeholder="tell something..."
             />
             <div className="reply-box-send">
-              <div className="send-text">post</div>
+              <div className="send-text" onClick={() => Post("Post this message")}>post</div>
             </div>
           </div>
         </div>
