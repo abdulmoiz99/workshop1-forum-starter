@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import './App.scss'
-import avatar from './images/bozai.png'
+import avatar from './images/bozai.png';
+import _ from 'lodash';
+
 
 // current logged in user info
 const user = {
@@ -27,7 +29,7 @@ const App = () => {
       content: 'Nice, well done',
       // created datetime
       ctime: '10-18 08:15',
-      like: 88,
+      like: 8,
     },
     {
       rpid: 2,
@@ -57,6 +59,18 @@ const App = () => {
   const deleteComment = (commentId: Number) => {
     setComments(comment => comment.filter(c => c.rpid !== commentId));
   }
+  const sortList = (sortBy: String) => {
+    let sortedComments;
+    if (sortBy === "Top") {
+      sortedComments = _.orderBy(comments, ['like'], ['desc']);
+
+    }
+    else {
+      sortedComments = _.orderBy(comments, ['ctime'], ['asc']);
+    }
+    setComments(sortedComments)
+
+  }
 
   return (
     <div className="app">
@@ -69,7 +83,10 @@ const App = () => {
           <li className="nav-sort">
             <span
               className={`nav-item ${activeTab === 'Top' ? 'active' : ''}`}
-              onClick={() => setActiveTab("Top")}
+              onClick={() => {
+                setActiveTab("Top");
+                sortList("Top");
+              }}
             >
               Top
             </span>
