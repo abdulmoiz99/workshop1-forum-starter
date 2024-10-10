@@ -59,18 +59,18 @@ const App = () => {
     },
   ])
 
+  const deleteComment = (commentId: Number) => {
+    setComments(comment => comment.filter(c => c.rpid !== commentId));
+  }
   return (
     <div className="app">
-      {/* Nav Tab */}
       <div className="reply-navigation">
         <ul className="nav-bar">
           <li className="nav-title">
             <span className="nav-title-text">Comments</span>
-            {/* Like */}
             <span className="total-reply">{comments.length}</span>
           </li>
           <li className="nav-sort">
-            {/* highlight class name： active */}
             <span className='nav-item'>Top</span>
             <span className='nav-item'>Newest</span>
           </li>
@@ -78,31 +78,24 @@ const App = () => {
       </div>
 
       <div className="reply-wrap">
-        {/* comments */}
         <div className="box-normal">
-          {/* current logged in user profile */}
           <div className="reply-box-avatar">
             <div className="bili-avatar">
               <img className="bili-avatar-img" src={avatar} alt="Profile" />
             </div>
           </div>
           <div className="reply-box-wrap">
-            {/* comment */}
             <textarea
               className="reply-box-textarea"
               placeholder="tell something..."
             />
-            {/* post button */}
             <div className="reply-box-send">
               <div className="send-text">post</div>
             </div>
           </div>
         </div>
-        {/* comment list */}
         <div className="reply-list">
-          {/* comment item */}
           <div className="reply-item">
-            {/* profile */}
             <div className="root-reply-avatar">
               <div className="bili-avatar">
                 <img
@@ -121,15 +114,12 @@ const App = () => {
                       <div className="user-name">{comment.user.uname}</div>
                     </div>
 
-                    {/* comment content */}
                     <div className="root-reply">
                       <span className="reply-content">{comment.content}</span>
                       <div className="reply-info">
-                        {/* comment created time */}
                         <span className="reply-time">{comment.ctime}</span>
-                        {/* total likes */}
                         <span className="reply-time">Like:{comment.like}</span>
-                        <span className="delete-btn">
+                        <span className="delete-btn" onClick={() => deleteComment(comment.rpid)}>
                           Delete
                         </span>
                       </div>
