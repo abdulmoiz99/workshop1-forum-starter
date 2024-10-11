@@ -3,6 +3,8 @@ import './App.scss'
 import avatar from './images/bozai.png';
 import _ from 'lodash';
 import { Comments } from './model/Comments';
+import { v4 as uuidv4 } from 'uuid';
+
 
 
 // current logged in user info
@@ -21,7 +23,7 @@ const App = () => {
   const [comments, setComments] = useState<Comments[]>([])
   const [activeTab, setActiveTab] = useState("Top")
 
-  const deleteComment = (commentId: Number) => {
+  const deleteComment = (commentId: string) => {
     setComments(comment => comment.filter(c => c.rpid !== commentId));
   }
   const sortList = (sortBy: String) => {
@@ -38,7 +40,7 @@ const App = () => {
 
   const Post = (commentText: string) => {
     const newComment = new Comments(
-      commentId++,
+      uuidv4(),
       user,
       commentText,
     );
