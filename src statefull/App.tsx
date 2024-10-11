@@ -1,9 +1,11 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import './App.scss'
 import avatar from './images/bozai.png';
 import _ from 'lodash';
 import { Comments } from './model/Comments';
 import { v4 as guid } from 'uuid';
+
+
 
 const user = {
   uid: '30009257',
@@ -11,10 +13,11 @@ const user = {
   uname: 'John',
 }
 
+
 const App = () => {
   const [comments, setComments] = useState<Comments[]>([])
   const [activeTab, setActiveTab] = useState("Top")
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [commentText, setCommentText] = useState("");
 
   const deleteComment = (commentId: string) => {
     setComments(comment => comment.filter(c => c.rpid !== commentId));
@@ -32,15 +35,12 @@ const App = () => {
   }
 
   const Post = () => {
-    if (inputRef.current?.value) {
-      const newComment = new Comments(
-        guid(),
-        user,
-        inputRef.current.value,
-      );
-      setComments([...comments, newComment])
-      inputRef.current.value = ''
-    }
+    const newComment = new Comments(
+      guid(),
+      user,
+      commentText,
+    );
+    setComments([...comments, newComment])
   }
 
   return (
@@ -80,11 +80,12 @@ const App = () => {
             </div>
           </div>
           <div className="reply-box-wrap">
-            <input
-              ref={inputRef}
-              type="text"
+            <textarea
               className="reply-box-textarea"
               placeholder="tell something..."
+              value={commentText} // Controlled textarea
+              onChange={(e) => setCommentText(e.target.value)}
+
             />
             <div className="reply-box-send">
               <div className="send-text" onClick={() => Post()}>post</div>
