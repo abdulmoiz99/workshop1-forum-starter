@@ -3,25 +3,21 @@ import './App.scss'
 import avatar from './images/bozai.png';
 import _ from 'lodash';
 import { Comments } from './model/Comments';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as guid } from 'uuid';
 
 
 
-// current logged in user info
 const user = {
-  // userid
   uid: '30009257',
-  // profile
   avatar,
-  // username
   uname: 'John',
 }
 
 
 const App = () => {
-  let commentId = 1;
   const [comments, setComments] = useState<Comments[]>([])
   const [activeTab, setActiveTab] = useState("Top")
+  const [commentText, setCommentText] = useState("");
 
   const deleteComment = (commentId: string) => {
     setComments(comment => comment.filter(c => c.rpid !== commentId));
@@ -38,9 +34,9 @@ const App = () => {
     setComments(sortedComments)
   }
 
-  const Post = (commentText: string) => {
+  const Post = () => {
     const newComment = new Comments(
-      uuidv4(),
+      guid(),
       user,
       commentText,
     );
@@ -87,9 +83,12 @@ const App = () => {
             <textarea
               className="reply-box-textarea"
               placeholder="tell something..."
+              value={commentText} // Controlled textarea
+              onChange={(e) => setCommentText(e.target.value)}
+
             />
             <div className="reply-box-send">
-              <div className="send-text" onClick={() => Post("Post this message")}>post</div>
+              <div className="send-text" onClick={() => Post()}>post</div>
             </div>
           </div>
         </div>
