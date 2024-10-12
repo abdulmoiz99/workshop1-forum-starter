@@ -7,6 +7,7 @@ type PropsType = {
 
 export const CommentBody = (props: PropsType) => {
   const {comments, deleteComment} = props
+
   return (
     <>
       <div className="reply-list">

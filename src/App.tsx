@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import "./App.scss";
 import avatar from "./images/bozai.png";
 import _ from "lodash";
 import { Comments } from "./model/Comments";
 import { v4 as guid } from "uuid";
 import { CommentBody } from "./CommentBody";
+import { useCommentsContext } from "./CommentContext";
 
 const user = {
   uid: "30009257",
@@ -13,7 +14,9 @@ const user = {
 };
 
 const App = () => {
-  const [comments, setComments] = useState<Comments[]>([]);
+  // const [comments, setComments] = useState<Comments[]>([]);
+  const { comments, setComments } = useCommentsContext();
+
   const [activeTab, setActiveTab] = useState("Top");
   const [commentText, setCommentText] = useState("");
 
@@ -28,8 +31,11 @@ const App = () => {
   }, []);
 
   const deleteComment = (commentId: string) => {
-    setComments((comment) => comment.filter((c) => c.rpid !== commentId));
+    setComments((comments: Comments[]) =>
+      comments.filter((c: Comments) => c.rpid !== commentId)
+    );
   };
+  
   const sortList = (sortBy: String) => {
     let sortedComments;
     if (sortBy === "Top") {
@@ -43,7 +49,9 @@ const App = () => {
   const Post = () => {
     const newComment = new Comments(guid(), user, commentText);
     setComments([...comments, newComment]);
+    setCommentText("");
   };
+  
 
   return (
     <div className="app">
@@ -94,7 +102,7 @@ const App = () => {
             </div>
           </div>
         </div>
-        <CommentBody comments={comments}  deleteComment ={deleteComment} />
+        <CommentBody comments={comments} deleteComment={deleteComment} />
       </div>
     </div>
   );
