@@ -1,6 +1,12 @@
 import { Comments } from "./model/Comments";
 
-export const CommentBody = ({ comments, deleteComment }: { comments: Comments[] , deleteComment: any}) => {
+type PropsType = {
+  comments: Comments[];
+  deleteComment: any;
+};
+
+export const CommentBody = (props: PropsType) => {
+  const {comments, deleteComment} = props
   return (
     <>
       <div className="reply-list">
