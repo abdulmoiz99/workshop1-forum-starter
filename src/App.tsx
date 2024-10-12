@@ -1,47 +1,49 @@
-import { useRef, useState } from 'react'
-import './App.scss'
-import avatar from './images/bozai.png';
-import _ from 'lodash';
-import { Comments } from './model/Comments';
-import { v4 as guid } from 'uuid';
+import { useState, useEffect } from "react";
+import "./App.scss";
+import avatar from "./images/bozai.png";
+import _ from "lodash";
+import { Comments } from "./model/Comments";
+import { v4 as guid } from "uuid";
+import { CommentBody } from "./CommentBody";
 
 const user = {
-  uid: '30009257',
+  uid: "30009257",
   avatar,
-  uname: 'John',
-}
+  uname: "John",
+};
 
 const App = () => {
-  const [comments, setComments] = useState<Comments[]>([])
-  const [activeTab, setActiveTab] = useState("Top")
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [comments, setComments] = useState<Comments[]>([]);
+  const [activeTab, setActiveTab] = useState("Top");
+  const [commentText, setCommentText] = useState("");
+
+  useEffect(() => {
+    const getList = async () => {
+      const response = await fetch("http://localhost:3000/list");
+      const data = await response.json();
+      setComments(_.orderBy(data, "like", "desc"));
+    };
+
+    getList();
+  }, []);
 
   const deleteComment = (commentId: string) => {
-    setComments(comment => comment.filter(c => c.rpid !== commentId));
-  }
+    setComments((comment) => comment.filter((c) => c.rpid !== commentId));
+  };
   const sortList = (sortBy: String) => {
     let sortedComments;
     if (sortBy === "Top") {
-      sortedComments = _.orderBy(comments, ['like'], ['desc']);
-
+      sortedComments = _.orderBy(comments, ["like"], ["desc"]);
+    } else {
+      sortedComments = _.orderBy(comments, ["ctime"], ["asc"]);
     }
-    else {
-      sortedComments = _.orderBy(comments, ['ctime'], ['asc']);
-    }
-    setComments(sortedComments)
-  }
+    setComments(sortedComments);
+  };
 
   const Post = () => {
-    if (inputRef.current?.value) {
-      const newComment = new Comments(
-        guid(),
-        user,
-        inputRef.current.value,
-      );
-      setComments([...comments, newComment])
-      inputRef.current.value = ''
-    }
-  }
+    const newComment = new Comments(guid(), user, commentText);
+    setComments([...comments, newComment]);
+  };
 
   return (
     <div className="app">
@@ -53,7 +55,7 @@ const App = () => {
           </li>
           <li className="nav-sort">
             <span
-              className={`nav-item ${activeTab === 'Top' ? 'active' : ''}`}
+              className={`nav-item ${activeTab === "Top" ? "active" : ""}`}
               onClick={() => {
                 setActiveTab("Top");
                 sortList("Top");
@@ -62,12 +64,11 @@ const App = () => {
               Top
             </span>
             <span
-              className={`nav-item ${activeTab === 'Newest' ? 'active' : ''}`}
+              className={`nav-item ${activeTab === "Newest" ? "active" : ""}`}
               onClick={() => setActiveTab("Newest")}
             >
               Newest
             </span>
-
           </li>
         </ul>
       </div>
@@ -80,56 +81,23 @@ const App = () => {
             </div>
           </div>
           <div className="reply-box-wrap">
-            <input
-              ref={inputRef}
-              type="text"
+            <textarea
               className="reply-box-textarea"
               placeholder="tell something..."
+              value={commentText} // Controlled textarea
+              onChange={(e) => setCommentText(e.target.value)}
             />
             <div className="reply-box-send">
-              <div className="send-text" onClick={() => Post()}>post</div>
-            </div>
-          </div>
-        </div>
-        <div className="reply-list">
-          <div className="reply-item">
-            <div className="root-reply-avatar">
-              <div className="bili-avatar">
-                <img
-                  className="bili-avatar-img"
-                  alt=""
-                />
+              <div className="send-text" onClick={() => Post()}>
+                post
               </div>
             </div>
-
-            <div className="content-wrap">
-
-              {comments.map(comment => {
-                return (
-                  <>
-                    <div className="user-info">
-                      <div className="user-name">{comment.user.uname}</div>
-                    </div>
-
-                    <div className="root-reply">
-                      <span className="reply-content">{comment.content}</span>
-                      <div className="reply-info">
-                        <span className="reply-time">{comment.ctime}</span>
-                        <span className="reply-time">Like:{comment.like}</span>
-                        <span className="delete-btn" onClick={() => deleteComment(comment.rpid)}>
-                          Delete
-                        </span>
-                      </div>
-                    </div>
-                  </>
-                );
-              })}
-            </div>
           </div>
         </div>
+        <CommentBody comments={comments}  deleteComment ={deleteComment} />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
